@@ -71,7 +71,7 @@ export default {
                             type: 'ks',
                             name: '开始',
                             ico: 'ks',
-                            color: '#5bf395'
+                            color: '#41942b'
                         }, {
                             id: '12',
                             type: 'js',
@@ -99,7 +99,7 @@ export default {
                             type: 'rw',
                             name: '处理节点',
                             ico: 'rw',
-                            color: '#742BB6',
+                            color: '#4246CB',
                         },
                     ]
                 },
@@ -121,7 +121,7 @@ export default {
                             type: 'bxwg',
                             name: '并行网关',
                             ico: 'bx',
-                            color: '#008DBC',
+                            color: '#008A79',
                         }
                     ]
                 }

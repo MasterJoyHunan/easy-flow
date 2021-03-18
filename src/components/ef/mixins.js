@@ -50,7 +50,7 @@ export const easyFlowMixin = {
                     // 线的颜色
                     stroke: '#000',
                     // 线的粗细，值越大线越粗
-                    strokeWidth: 3,
+                    strokeWidth: 1,
                     // 设置外边线的颜色，默认设置透明，这样别人就看不见了，点击线的时候可以不用精确点击，参考 https://blog.csdn.net/roymno2/article/details/72717101
                     outlineStroke: 'transparent',
                     // 线外边的宽，值越大，线的点击范围越大

@@ -13,13 +13,9 @@
                                size="large"
                                @click="deleteElement"
                                :disabled="!this.activeElement.type"></el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <el-button type="text"
-                               icon="el-icon-download"
-                               size="large"
-                               @click="downloadData"></el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <el-button type="text"
+                    <!-- <el-divider direction="vertical"></el-divider> -->
+                    <!-- <el-divider direction="vertical"></el-divider> -->
+                    <!-- <el-button type="text"
                                icon="el-icon-plus"
                                size="large"
                                @click="zoomAdd"></el-button>
@@ -27,7 +23,7 @@
                     <el-button type="text"
                                icon="el-icon-minus"
                                size="large"
-                               @click="zoomSub"></el-button>
+                               @click="zoomSub"></el-button> -->
                     <div style="float: right;margin-right: 5px">
                         <el-button type="info"
                                    plain
@@ -35,42 +31,6 @@
                                    icon="el-icon-document"
                                    @click="dataInfo"
                                    size="mini">流程信息</el-button>
-                        <el-button type="primary"
-                                   plain
-                                   round
-                                   @click="dataReloadA"
-                                   icon="el-icon-refresh"
-                                   size="mini">切换流程A</el-button>
-                        <el-button type="primary"
-                                   plain
-                                   round
-                                   @click="dataReloadB"
-                                   icon="el-icon-refresh"
-                                   size="mini">切换流程B</el-button>
-                        <el-button type="primary"
-                                   plain
-                                   round
-                                   @click="dataReloadC"
-                                   icon="el-icon-refresh"
-                                   size="mini">切换流程C</el-button>
-                        <el-button type="primary"
-                                   plain
-                                   round
-                                   @click="dataReloadD"
-                                   icon="el-icon-refresh"
-                                   size="mini">自定义样式</el-button>
-                        <el-button type="primary"
-                                   plain
-                                   round
-                                   @click="dataReloadE"
-                                   icon="el-icon-refresh"
-                                   size="mini">力导图</el-button>
-                        <el-button type="info"
-                                   plain
-                                   round
-                                   icon="el-icon-document"
-                                   @click="openHelp"
-                                   size="mini">帮助</el-button>
                     </div>
                 </div>
             </el-col>
@@ -123,21 +83,14 @@ import { easyFlowMixin } from '@/components/ef/mixins'
 import flowNode from '@/components/ef/node'
 import nodeMenu from '@/components/ef/node_menu'
 import FlowInfo from '@/components/ef/info'
-import FlowHelp from '@/components/ef/help'
 import FlowNodeForm from './node_form'
 import lodash from 'lodash'
-import { getDataA } from './data_A'
-import { getDataB } from './data_B'
-import { getDataC } from './data_C'
-import { getDataD } from './data_D'
-import { getDataE } from './data_E'
-import { ForceDirected } from './force-directed'
 
 export default {
     data() {
         return {
             // jsPlumb 实例
-            jsPlumb: null,
+            jsPlumb: {},
             // 控制画布销毁
             easyFlowVisible: true,
             // 控制流程数据显示与隐藏
@@ -146,7 +99,10 @@ export default {
             loadEasyFlowFinish: false,
             flowHelpVisible: false,
             // 数据
-            data: {},
+            data: {
+                nodeList: [],
+                lineList: []
+            },
             // 激活的元素、可能是节点、可能是连线
             activeElement: {
                 // 可选值 node 、line
@@ -157,13 +113,14 @@ export default {
                 sourceId: undefined,
                 targetId: undefined
             },
-            zoom: 0.5
+            zoom: 0.5,
+            nodeList: []
         }
     },
     // 一些基础配置移动该文件中
     mixins: [easyFlowMixin],
     components: {
-        draggable, flowNode, nodeMenu, FlowInfo, FlowNodeForm, FlowHelp
+        draggable, flowNode, nodeMenu, FlowInfo, FlowNodeForm
     },
     directives: {
         'flowDrag': {
@@ -202,12 +159,10 @@ export default {
             }
         }
     },
-    mounted() {
+    async mounted() {
         this.jsPlumb = jsPlumb.getInstance()
-        this.$nextTick(() => {
-            // 默认加载流程A的数据、在这里可以根据具体的业务返回符合流程数据格式的数据即可
-            this.dataReload(getDataB())
-        })
+        await this.$nextTick()
+        await this.jsPlumbInit()
     },
     methods: {
         jsPlumbInit() {
@@ -403,7 +358,7 @@ export default {
             top -= 28
             var nodeId = Math.random().toString(36).substr(3, 10)
             var node = {
-                id: Math.random().toString(36).substr(3, 10),
+                id: nodeId,
                 name: nodeMenu.name,
                 type: nodeMenu.type,
                 left: left + 'px',
@@ -420,8 +375,8 @@ export default {
             this.jsPlumb.makeTarget(nodeId, this.jsplumbTargetOptions)
             this.jsPlumb.draggable(nodeId, {
                 containment: 'parent',
-                stop: function (el) {
-                    // 拖拽节点结束后的对调
+                stop: el => {
+                    // 拖拽节点结束后的回调
                     console.log('拖拽结束: ', el)
                 }
             })
@@ -430,29 +385,26 @@ export default {
          * 删除节点
          * @param nodeId 被删除节点的ID
          */
-        deleteNode(nodeId) {
-            this.$confirm('确定要删除节点' + nodeId + '?', '提示', {
+        async deleteNode(nodeId) {
+            await this.$confirm('确定要删除节点' + nodeId + '?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning',
                 closeOnClickModal: false
-            }).then(() => {
-                /**
-                 * 这里需要进行业务判断，是否可以删除
-                 */
-                this.data.nodeList = this.data.nodeList.filter(function (node) {
-                    if (node.id === nodeId) {
-                        // 伪删除，将节点隐藏，否则会导致位置错位
-                        // node.show = false
-                        return false
-                    }
-                    return true
-                })
-                this.$nextTick(function () {
-                    this.jsPlumb.removeAllEndpoints(nodeId);
-                })
-            }).catch(() => {
             })
+            /**
+             * 这里需要进行业务判断，是否可以删除
+             */
+            this.data.nodeList = this.data.nodeList.filter(node => {
+                if (node.id === nodeId) {
+                    // 伪删除，将节点隐藏，否则会导致位置错位
+                    // node.show = false
+                    return false
+                }
+                return true
+            })
+            await this.$nextTick()
+            this.jsPlumb.removeAllEndpoints(nodeId);
             return true
         },
         clickNode(nodeId) {
@@ -484,96 +436,27 @@ export default {
             this.jsPlumb.repaint()
         },
         // 流程数据信息
-        dataInfo() {
+        async dataInfo() {
             this.flowInfoVisible = true
-            this.$nextTick(function () {
-                this.$refs.flowInfo.init()
-            })
-        },
-        // 加载流程图
-        dataReload(data) {
-            this.easyFlowVisible = false
-            this.data.nodeList = []
-            this.data.lineList = []
-            this.$nextTick(() => {
-                data = lodash.cloneDeep(data)
-                this.easyFlowVisible = true
-                this.data = data
-                this.$nextTick(() => {
-                    this.jsPlumb = jsPlumb.getInstance()
-                    this.$nextTick(() => {
-                        this.jsPlumbInit()
-                    })
-                })
-            })
-        },
-        // 模拟载入数据dataA
-        dataReloadA() {
-            this.dataReload(getDataA())
-        },
-        // 模拟载入数据dataB
-        dataReloadB() {
-            this.dataReload(getDataB())
-        },
-        // 模拟载入数据dataC
-        dataReloadC() {
-            this.dataReload(getDataC())
-        },
-        // 模拟载入数据dataD
-        dataReloadD() {
-            this.dataReload(getDataD())
-        },
-        // 模拟加载数据dataE，自适应创建坐标
-        dataReloadE() {
-            let dataE = getDataE()
-            let tempData = lodash.cloneDeep(dataE)
-            let data = ForceDirected(tempData)
-            this.dataReload(data)
-            this.$message({
-                message: '力导图每次产生的布局是不一样的',
-                type: 'warning'
-            });
-        },
-        zoomAdd() {
-            if (this.zoom >= 1) {
-                return
-            }
-            this.zoom = this.zoom + 0.1
-            this.$refs.efContainer.style.transform = `scale(${this.zoom})`
-            this.jsPlumb.setZoom(this.zoom)
-        },
-        zoomSub() {
-            if (this.zoom <= 0) {
-                return
-            }
-            this.zoom = this.zoom - 0.1
-            this.$refs.efContainer.style.transform = `scale(${this.zoom})`
-            this.jsPlumb.setZoom(this.zoom)
-        },
-        // 下载数据
-        downloadData() {
-            this.$confirm('确定要下载该流程数据吗？', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-                closeOnClickModal: false
-            }).then(() => {
-                var datastr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data, null, '\t'));
-                var downloadAnchorNode = document.createElement('a')
-                downloadAnchorNode.setAttribute("href", datastr);
-                downloadAnchorNode.setAttribute("download", 'data.json')
-                downloadAnchorNode.click();
-                downloadAnchorNode.remove();
-                this.$message.success("正在下载中,请稍后...")
-            }).catch(() => {
-            })
-        },
-        openHelp() {
-            this.flowHelpVisible = true
-            this.$nextTick(function () {
-                this.$refs.flowHelp.init()
-            })
+            await this.$nextTick()
+            this.$refs.flowInfo.init()
         }
+        // zoomAdd() {
+        //     if (this.zoom >= 1) {
+        //         return
+        //     }
+        //     this.zoom = this.zoom + 0.1
+        //     this.$refs.efContainer.style.transform = `scale(${this.zoom})`
+        //     this.jsPlumb.setZoom(this.zoom)
+        // },
+        // zoomSub() {
+        //     if (this.zoom <= 0) {
+        //         return
+        //     }
+        //     this.zoom = this.zoom - 0.1
+        //     this.$refs.efContainer.style.transform = `scale(${this.zoom})`
+        //     this.jsPlumb.setZoom(this.zoom)
+        // }
     }
 }
 </script>
