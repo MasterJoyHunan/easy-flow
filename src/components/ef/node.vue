@@ -6,7 +6,8 @@
          :class="nodeContainerClass">
         <!-- 节点类型的图标 -->
         <div class="ef-node-left-ico">
-            <svg-icon icon-class="example"></svg-icon>
+            <svg-icon :icon-class="node.ico"
+                      :fill="node.color"></svg-icon>
         </div>
         <!-- 节点名称 -->
         <div class="ef-node-text"
@@ -40,7 +41,8 @@ export default {
         nodeContainerStyle() {
             return {
                 top: this.node.top,
-                left: this.node.left
+                left: this.node.left,
+                borderColor: this.node.color,
             }
         },
     },
@@ -64,7 +66,7 @@ export default {
     }
 }
 </script>
-<style >
+<style scoped>
 /*节点的最外层容器*/
 .ef-node-container {
     position: absolute;

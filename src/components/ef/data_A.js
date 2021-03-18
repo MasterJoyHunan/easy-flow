@@ -7,7 +7,8 @@ let dataA = {
             type: 'task',
             left: '26px',
             top: '161px',
-            ico: 'el-icon-user-solid'
+            ico: 'el-icon-user-solid',
+            color: '#5bf395',
         },
         {
             id: 'nodeB',
@@ -15,7 +16,9 @@ let dataA = {
             type: 'task',
             left: '340px',
             top: '161px',
-            ico: 'el-icon-goods'
+            ico: 'el-icon-goods',
+            color: '#5bf395',
+
         },
         {
             id: 'nodeC',
@@ -23,7 +26,9 @@ let dataA = {
             type: 'task',
             left: '739px',
             top: '161px',
-            ico: 'el-icon-present'
+            ico: 'el-icon-present',
+            color: '#5bf395',
+
         }
     ],
     lineList: [{
@@ -35,6 +40,6 @@ let dataA = {
     }]
 }
 
-export function getDataA () {
+export function getDataA() {
     return dataA
 }

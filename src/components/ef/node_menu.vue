@@ -15,9 +15,11 @@
                         :key="subMenu.id"
                         :type="subMenu.type">
                         <div style="display: inline-block;">
-                            <div class="ef-node-menu-li">
+                            <div class="ef-node-menu-li"
+                                 :style="{borderColor:subMenu.color}">
                                 <div class="ef-node-left-ico">
-                                    <svg-icon icon-class="example"></svg-icon>
+                                    <svg-icon :icon-class="subMenu.ico"
+                                              :fill="subMenu.color"></svg-icon>
                                 </div>
                                 <!-- 节点名称 -->
                                 <div class="ef-node-text">
@@ -66,18 +68,16 @@ export default {
                     children: [
                         {
                             id: '11',
-                            type: 'timer',
+                            type: 'ks',
                             name: '开始',
-                            ico: 'el-icon-time',
-                            // 自定义覆盖样式
-                            style: {}
+                            ico: 'ks',
+                            color: '#5bf395'
                         }, {
                             id: '12',
-                            type: 'task',
+                            type: 'js',
                             name: '结束',
-                            ico: 'el-icon-odometer',
-                            // 自定义覆盖样式
-                            style: {}
+                            ico: 'js',
+                            color: '#FF6343',
                         }
                     ]
                 },
@@ -90,42 +90,38 @@ export default {
                     children: [
                         {
                             id: '21',
-                            type: 'end',
+                            type: 'sp',
                             name: '审批节点',
-                            ico: 'el-icon-caret-right',
-                            // 自定义覆盖样式
-                            style: {}
+                            ico: 'sp',
+                            color: '#742BB6'
                         }, {
                             id: '22',
-                            type: 'over',
+                            type: 'rw',
                             name: '处理节点',
-                            ico: 'el-icon-shopping-cart-full',
-                            // 自定义覆盖样式
-                            style: {}
-                        }
+                            ico: 'rw',
+                            color: '#742BB6',
+                        },
                     ]
                 },
                 {
-                    id: '2',
+                    id: '3',
                     type: 'group',
                     name: '网关节点',
                     ico: 'el-icon-video-pause',
                     open: true,
                     children: [
                         {
-                            id: '21',
-                            type: 'end',
+                            id: '31',
+                            type: 'ptgw',
                             name: '排他网关',
-                            ico: 'el-icon-caret-right',
-                            // 自定义覆盖样式
-                            style: {}
+                            ico: 'pt',
+                            color: '#008DBC',
                         }, {
-                            id: '22',
-                            type: 'over',
+                            id: '32',
+                            type: 'bxwg',
                             name: '并行网关',
-                            ico: 'el-icon-shopping-cart-full',
-                            // 自定义覆盖样式
-                            style: {}
+                            ico: 'bx',
+                            color: '#008DBC',
                         }
                     ]
                 }
@@ -135,21 +131,6 @@ export default {
     },
     components: {
         draggable
-    },
-    created() {
-        /**
-         * 以下是为了解决在火狐浏览器上推拽时弹出tab页到搜索问题
-         * @param event
-         */
-        if (this.isFirefox()) {
-            document.body.ondrop = function (event) {
-                // 解决火狐浏览器无法获取鼠标拖拽结束的坐标问题
-                mousePosition.left = event.layerX
-                mousePosition.top = event.clientY - 50
-                event.preventDefault();
-                event.stopPropagation();
-            }
-        }
     },
     methods: {
         // 根据类型获取左侧菜单对象
@@ -172,18 +153,10 @@ export default {
         end(evt, e) {
             this.$emit('addNode', evt, this.nodeMenu, mousePosition)
         },
-        // 是否是火狐浏览器
-        isFirefox() {
-            var userAgent = navigator.userAgent
-            if (userAgent.indexOf("Firefox") > -1) {
-                return true
-            }
-            return false
-        }
     }
 }
 </script>
-<style>
+<style scoped>
 /*节点菜单*/
 .flow-menu {
     overflow-x: scroll;

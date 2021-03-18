@@ -1,5 +1,6 @@
 <template>
     <svg :class="svgClass"
+         :style="{fill: fill}"
          aria-hidden="true"
          v-on="$listeners">
         <use :href="iconName" />
@@ -18,12 +19,13 @@ export default {
         className: {
             type: String,
             default: ''
+        },
+        fill: {
+            type: String,
+            default: ''
         }
     },
     computed: {
-        isExternal() {
-            return isExternal(this.iconClass)
-        },
         iconName() {
             return `#icon-${this.iconClass}`
         },
@@ -32,12 +34,6 @@ export default {
                 return 'svg-icon ' + this.className
             } else {
                 return 'svg-icon'
-            }
-        },
-        styleExternalIcon() {
-            return {
-                mask: `url(${this.iconClass}) no-repeat 50% 50%`,
-                '-webkit-mask': `url(${this.iconClass}) no-repeat 50% 50%`
             }
         }
     }
@@ -49,13 +45,7 @@ export default {
     width: 1em;
     height: 1em;
     vertical-align: -0.15em;
-    fill: currentColor;
+    /* fill: currentColor; */
     overflow: hidden;
-}
-
-.svg-external-icon {
-    background-color: currentColor;
-    mask-size: cover !important;
-    display: inline-block;
 }
 </style>

@@ -9,7 +9,8 @@ let dataB = {
             top: '223px',
             ico: 'el-icon-user-solid',
             state: 'success',
-            viewOnly: true
+            viewOnly: true,
+            color: '#5bf395',
         },
         {
             id: 'nodeB',
@@ -18,7 +19,8 @@ let dataB = {
             left: '351px',
             top: '96px',
             ico: 'el-icon-goods',
-            state: 'error'
+            state: 'error',
+            color: '#5bf395',
         },
         {
             id: 'nodeC',
@@ -27,7 +29,8 @@ let dataB = {
             left: '354px',
             top: '351px',
             ico: 'el-icon-present',
-            state: 'warning'
+            state: 'warning',
+            color: '#5bf395',
         }, {
             id: 'nodeD',
             name: '流程B-节点D',
@@ -35,7 +38,8 @@ let dataB = {
             left: '723px',
             top: '215px',
             ico: 'el-icon-present',
-            state: 'running'
+            state: 'running',
+            color: '#5bf395',
         }
     ],
     lineList: [{
@@ -56,6 +60,6 @@ let dataB = {
     ]
 }
 
-export function getDataB () {
+export function getDataB() {
     return dataB
 }
