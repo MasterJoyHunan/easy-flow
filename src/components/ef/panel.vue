@@ -68,8 +68,6 @@
         <flow-info v-if="flowInfoVisible"
                    ref="flowInfo"
                    :data="data"></flow-info>
-        <flow-help v-if="flowHelpVisible"
-                   ref="flowHelp"></flow-help>
     </div>
 
 </template>
@@ -97,7 +95,6 @@ export default {
             flowInfoVisible: false,
             // 是否加载完毕标志位
             loadEasyFlowFinish: false,
-            flowHelpVisible: false,
             // 数据
             data: {
                 nodeList: [],
@@ -162,7 +159,7 @@ export default {
     async mounted() {
         this.jsPlumb = jsPlumb.getInstance()
         await this.$nextTick()
-        await this.jsPlumbInit()
+        this.jsPlumbInit()
     },
     methods: {
         jsPlumbInit() {
