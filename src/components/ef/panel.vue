@@ -159,10 +159,10 @@ export default {
     async mounted() {
         this.jsPlumb = jsPlumb.getInstance()
         await this.$nextTick()
-        this.jsPlumbInit()
+        await this.jsPlumbInit()
     },
     methods: {
-        jsPlumbInit() {
+        async jsPlumbInit() {
             this.jsPlumb.ready(() => {
                 // 导入默认配置
                 this.jsPlumb.importDefaults(this.jsplumbSetting)
@@ -233,7 +233,7 @@ export default {
             })
         },
         // 加载流程图
-        loadEasyFlow() {
+        async loadEasyFlow() {
             // 初始化节点
             for (var i = 0; i < this.data.nodeList.length; i++) {
                 let node = this.data.nodeList[i]
@@ -264,9 +264,8 @@ export default {
                 }
                 this.jsPlumb.connect(connParam, this.jsplumbConnectOptions)
             }
-            this.$nextTick(function () {
-                this.loadEasyFlowFinish = true
-            })
+            await this.$nextTick()
+            this.loadEasyFlowFinish = true
         },
         // 设置连线条件
         setLineLabel(from, to, label) {
